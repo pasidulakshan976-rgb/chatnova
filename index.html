@@ -1,131 +1,203 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>ChatNova</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ChatNova</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+* {
+  box-sizing: border-box;
+}
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
-    }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0f172a;
+  color: white;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
 
-    /* HEADER */
-    header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 60px;
-      background: #020617;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      font-weight: bold;
-      z-index: 100;
-    }
+/* HEADER */
+header {
+  background: #020617;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
 
-    /* CHAT AREA */
-    #chat {
-      padding: 15px;
-      margin-top: 60px;   /* header height */
-      margin-bottom: 70px;/* footer height */
-      overflow-y: auto;
-      min-height: calc(100vh - 130px);
-    }
+header img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
 
-    .msg {
-      margin-bottom: 10px;
-      padding: 10px 14px;
-      border-radius: 12px;
-      max-width: 70%;
-      word-wrap: break-word;
-    }
+header .title {
+  font-size: 18px;
+  font-weight: bold;
+}
 
-    .me {
-      background: #2563eb;
-      margin-left: auto;
-      text-align: right;
-    }
+/* CHAT AREA */
+#chat {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
 
-    .other {
-      background: #334155;
-    }
+/* MESSAGE */
+.msg {
+  max-width: 75%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  margin-bottom: 8px;
+  word-wrap: break-word;
+  font-size: 15px;
+}
 
-    /* FOOTER */
-    footer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 70px;
-      display: flex;
-      gap: 10px;
-      padding: 10px;
-      background: #020617;
-      z-index: 100;
-    }
+.me {
+  background: #2563eb;
+  margin-left: auto;
+  text-align: right;
+}
 
-    input {
-      flex: 1;
-      padding: 12px;
-      border-radius: 10px;
-      border: none;
-      outline: none;
-      font-size: 16px;
-    }
+.other {
+  background: #334155;
+}
 
-    button {
-      padding: 12px 18px;
-      border: none;
-      border-radius: 10px;
-      background: #22c55e;
-      color: black;
-      font-weight: bold;
-      font-size: 16px;
-    }
-  </style>
+/* TYPING */
+.typing {
+  font-size: 13px;
+  opacity: 0.7;
+  margin-bottom: 10px;
+}
+
+/* FOOTER */
+footer {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  background: #020617;
+  position: sticky;
+  bottom: 0;
+}
+
+input {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+}
+
+button {
+  padding: 12px 16px;
+  border: none;
+  border-radius: 10px;
+  background: #22c55e;
+  color: black;
+  font-weight: bold;
+  font-size: 16px;
+}
+</style>
 </head>
 
 <body>
 
-  <header>🚀 ChatNova</header>
+<header>
+  <img src="https://i.imgur.com/7k12EPD.png">
+  <div class="title">ChatNova AI</div>
+</header>
 
-  <div id="chat">
-    <div class="msg other">Welcome to ChatNova 🙂</div>
-  </div>
+<div id="chat">
+  <div class="msg other">👋 Hello! I’m ChatNova. Ask me anything.</div>
+</div>
 
-  <footer>
-    <input id="message" placeholder="Type a message..." />
-    <button onclick="send()">Send</button>
-  </footer>
+<footer>
+  <input id="message" placeholder="Type a message..." />
+  <button onclick="send()">Send</button>
+</footer>
 
-  <script>
-    function send() {
-      const input = document.getElementById("message");
-      if (input.value.trim() === "") return;
+<script>
+const chat = document.getElementById("chat");
+const input = document.getElementById("message");
 
-      const msg = document.createElement("div");
-      msg.className = "msg me";
-      msg.innerText = input.value;
+function send() {
+  if (input.value.trim() === "") return;
 
-      document.getElementById("chat").appendChild(msg);
-      input.value = "";
+  const userMsg = document.createElement("div");
+  userMsg.className = "msg me";
+  userMsg.innerText = input.value;
+  chat.appendChild(userMsg);
 
-      // auto scroll
-      document.getElementById("chat").scrollTop =
-        document.getElementById("chat").scrollHeight;
-    }
-  </script>
+  const userText = input.value;
+  input.value = "";
+  scrollDown();
+
+  showTyping();
+
+  setTimeout(() => {
+    removeTyping();
+    botReply(userText);
+  }, 1200);
+}
+
+function botReply(text) {
+  const msg = document.createElement("div");
+  msg.className = "msg other";
+  msg.innerText = getReply(text);
+  chat.appendChild(msg);
+  scrollDown();
+}
+
+function getReply(text) {
+  text = text.toLowerCase();
+
+  if (text.includes("hi") || text.includes("hello"))
+    return "Hello 👋 How can I help you today?";
+
+  if (text.includes("name"))
+    return "My name is ChatNova 🤖";
+
+  if (text.includes("how are you"))
+    return "I'm always great 😄 Ready to assist you!";
+
+  if (text.includes("help"))
+    return "Sure! Tell me what you need help with.";
+
+  return "Interesting 🤔 Tell me more...";
+}
+
+function showTyping() {
+  const typing = document.createElement("div");
+  typing.id = "typing";
+  typing.className = "typing other";
+  typing.innerText = "ChatNova is typing...";
+  chat.appendChild(typing);
+  scrollDown();
+}
+
+function removeTyping() {
+  const typing = document.getElementById("typing");
+  if (typing) typing.remove();
+}
+
+function scrollDown() {
+  chat.scrollTop = chat.scrollHeight;
+}
+
+input.addEventListener("keydown", function(e) {
+  if (e.key === "Enter") send();
+});
+</script>
 
 </body>
 </html>
