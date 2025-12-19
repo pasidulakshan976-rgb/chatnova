@@ -1,203 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>ChatNova</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatNova</title>
 
-<style>
-* {
-  box-sizing: border-box;
-}
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #0f172a;
-  color: white;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
+    header {
+      background: #020617;
+      padding: 15px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 20px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
 
-/* HEADER */
-header {
-  background: #020617;
-  padding: 12px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
+    #chat {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+    }
 
-header img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-}
+    .msg {
+      margin-bottom: 10px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      max-width: 75%;
+      word-wrap: break-word;
+    }
 
-header .title {
-  font-size: 18px;
-  font-weight: bold;
-}
+    .me {
+      background: #2563eb;
+      margin-left: auto;
+      text-align: right;
+    }
 
-/* CHAT AREA */
-#chat {
-  flex: 1;
-  padding: 15px;
-  overflow-y: auto;
-  scroll-behavior: smooth;
-}
+    .other {
+      background: #334155;
+    }
 
-/* MESSAGE */
-.msg {
-  max-width: 75%;
-  padding: 10px 14px;
-  border-radius: 14px;
-  margin-bottom: 8px;
-  word-wrap: break-word;
-  font-size: 15px;
-}
+    footer {
+      display: flex;
+      padding: 10px;
+      background: #020617;
+      position: sticky;
+      bottom: 0;
+    }
 
-.me {
-  background: #2563eb;
-  margin-left: auto;
-  text-align: right;
-}
+    input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+    }
 
-.other {
-  background: #334155;
-}
-
-/* TYPING */
-.typing {
-  font-size: 13px;
-  opacity: 0.7;
-  margin-bottom: 10px;
-}
-
-/* FOOTER */
-footer {
-  display: flex;
-  gap: 8px;
-  padding: 10px;
-  background: #020617;
-  position: sticky;
-  bottom: 0;
-}
-
-input {
-  flex: 1;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  outline: none;
-  font-size: 16px;
-}
-
-button {
-  padding: 12px 16px;
-  border: none;
-  border-radius: 10px;
-  background: #22c55e;
-  color: black;
-  font-weight: bold;
-  font-size: 16px;
-}
-</style>
+    button {
+      margin-left: 8px;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 8px;
+      background: #22c55e;
+      font-weight: bold;
+    }
+  </style>
 </head>
 
 <body>
 
-<header>
-  <img src="https://i.imgur.com/7k12EPD.png">
-  <div class="title">ChatNova AI</div>
-</header>
+  <header>🚀 ChatNova</header>
 
-<div id="chat">
-  <div class="msg other">👋 Hello! I’m ChatNova. Ask me anything.</div>
-</div>
+  <div id="chat">
+    <div class="msg other">Welcome to ChatNova 🙂</div>
+  </div>
 
-<footer>
-  <input id="message" placeholder="Type a message..." />
-  <button onclick="send()">Send</button>
-</footer>
+  <footer>
+    <input id="message" placeholder="Type a message..." />
+    <button onclick="send()">Send</button>
+  </footer>
 
-<script>
-const chat = document.getElementById("chat");
-const input = document.getElementById("message");
+  <script>
+    function send() {
+      const input = document.getElementById("message");
+      if (input.value.trim() === "") return;
 
-function send() {
-  if (input.value.trim() === "") return;
+      const msg = document.createElement("div");
+      msg.className = "msg me";
+      msg.innerText = input.value;
 
-  const userMsg = document.createElement("div");
-  userMsg.className = "msg me";
-  userMsg.innerText = input.value;
-  chat.appendChild(userMsg);
-
-  const userText = input.value;
-  input.value = "";
-  scrollDown();
-
-  showTyping();
-
-  setTimeout(() => {
-    removeTyping();
-    botReply(userText);
-  }, 1200);
-}
-
-function botReply(text) {
-  const msg = document.createElement("div");
-  msg.className = "msg other";
-  msg.innerText = getReply(text);
-  chat.appendChild(msg);
-  scrollDown();
-}
-
-function getReply(text) {
-  text = text.toLowerCase();
-
-  if (text.includes("hi") || text.includes("hello"))
-    return "Hello 👋 How can I help you today?";
-
-  if (text.includes("name"))
-    return "My name is ChatNova 🤖";
-
-  if (text.includes("how are you"))
-    return "I'm always great 😄 Ready to assist you!";
-
-  if (text.includes("help"))
-    return "Sure! Tell me what you need help with.";
-
-  return "Interesting 🤔 Tell me more...";
-}
-
-function showTyping() {
-  const typing = document.createElement("div");
-  typing.id = "typing";
-  typing.className = "typing other";
-  typing.innerText = "ChatNova is typing...";
-  chat.appendChild(typing);
-  scrollDown();
-}
-
-function removeTyping() {
-  const typing = document.getElementById("typing");
-  if (typing) typing.remove();
-}
-
-function scrollDown() {
-  chat.scrollTop = chat.scrollHeight;
-}
-
-input.addEventListener("keydown", function(e) {
-  if (e.key === "Enter") send();
-});
-</script>
+      document.getElementById("chat").appendChild(msg);
+      input.value = "";
+      document.getElementById("chat").scrollTop =
+        document.getElementById("chat").scrollHeight;
+    }
+  </script>
 
 </body>
 </html>
